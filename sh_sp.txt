@@ -1,0 +1,19 @@
+python trainSketchModule.py --text_path ../data/rawtext/yaheiB/train --text_datasize 708 --augment_text_path ../data/rawtext/augment --augment_text_datasize 5 --batchsize 16 --Btraining_num 12800 --save_GB_name ../save/GB.ckpt --gpu
+
+python trainStructureTransfer.py --style_name ../data/style/smoke.png --label_name ../data/style/label/smoke.png --batchsize 16 --Straining_num 2560 --step1_epochs 20 --step2_epochs 20 --step3_epochs 20 --scale_num 4 --Sanglejitter --save_path ../save --save_name smoke --gpu
+
+python trainTextureTransfer.py --style_name ../data/style/smoke.png --label_name ../data/style/label/smoke.png --batchsize 4 --Ttraining_num 800 --texture_step1_epochs 40 --Tanglejitter --save_path ../save --save_name smoke --gpu
+
+python test.py --text_name ../data/rawtext/yaheiB/val/0900.png --scale -1 --scale_step 0.2 --structure_model ../save/smoke-GS.ckpt --texture_model ../save/smoke-GT.ckpt --result_dir ../output --name smoke-0900 --gpu
+
+
+python test.py --text_name ../data/rawtext/yaheiB/val/0835.png --scale -1 --scale_step 0.2 --structure_model ../save/fire-GS-iccv.ckpt --texture_model ../save/fire-GT-iccv.ckpt --result_dir ../output --name fire-0835 --gpu
+
+
+CUDA_VISIBLE_DEVICES=1 python trainStructureTransfer.py  --batchsize 8  --Straining_num 2560 --step1_epochs 30 --step2_epochs 40 --step3_epochs 80 --scale_num 4 --Sanglejitter --save_path ../save --save_name 8sty --gpu
+
+CUDA_VISIBLE_DEVICES=3 python trainTextureTransfer.py  --batchsize 8 --Ttraining_num 2560 --texture_step1_epochs 80 --load_GS_name ../save/4GDmu_spade1_2-GS.ckpt --texture_step2_epochs 0 --Tanglejitter --save_path ../save --save_name 4sty --gpu
+
+python test.py --label_name ../data/style/label/sakura.png --style_name ../data/style/sakura.png --text_name ../data/rawtext/yaheiB/val/0720.png --scale -1 --scale_step 0.2 --structure_model ../save/8sty-GS.ckpt --texture_model ../save/8sty-GT.ckpt --result_dir ../output --name sakura-0720 --gpu
+
+CUDA_VISIBLE_DEVICES=1 python trainTextureTransfer.py  --batchsize 4 --Ttraining_num 2560 --load_GS_name ../save/8pp1-GS.ckpt --texture_step1_epochs 80 --texture_step2_epochs 10 --Tanglejitter --save_path ../save --save_name 1D_s --style_loss --text_path ../data/rawtext/yaheiB/train --text_datasize 708 --gpu
